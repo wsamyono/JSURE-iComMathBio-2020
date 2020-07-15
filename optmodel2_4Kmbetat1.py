@@ -53,7 +53,7 @@ def fopdt(y,t,x,Km1,Km2,Km3,Km4,beta):
     #    dydt = Km*y                # (-(y-yp0))*Km # + Km * (um-u0))/taum
     return dydt
 
-# simulate FOPDT model with x=[Km,taum,thetam]
+# simulate FOPDT model with x=[Km1,Km2,Km3,Km4,beta]
 def sim_model(x):
     # input arguments
     Km1 = x[0]
@@ -88,11 +88,11 @@ def objective(x):
 
 # initial guesses
 x0 = np.zeros(5)
-x0[0] = -100.00 # Km1
-x0[1] = 100.0 # Km2 --> taum
-x0[2] = 190.0 # thetam
-x0[3] = 0.01 
-x0[4] = 0.0999
+x0[0] = -30.00 # Km1
+x0[1] = 9.99 # Km2 --> taum
+x0[2] = 10.0 # thetam
+x0[3] = 0.001 
+x0[4] = 1.0
 
 # show initial objective
 print('Initial SSE Objective: ' + str(objective(x0)))
@@ -135,5 +135,8 @@ plt.title('Best Fit Model without Treatment - Mendelsohn',loc='center')
 #plt.plot(t,x[1],'r--',linewidth=3)
 # plt.legend(['Measured','Interpolated'],loc='best')
 # plt.ylabel('Input Data')
-plt.savefig('outputmodel23Kmbetat1.png',dpi=300, bbox_inches='tight')
+data = np.vstack((t,yp,ym2,)) # vertical stack
+data = data.T              # transpose data
+np.savetxt('outputdatamd2t1.txt',data,delimiter=',')
+plt.savefig('outputmodel24Kmbetat1.png',dpi=300, bbox_inches='tight')
 plt.show()
