@@ -4,7 +4,6 @@
 Created on Mon Jul 13 13:05:58 2020
 @author: skyler
 """
-
 import math 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,7 +15,7 @@ from scipy.optimize import minimize
 # Column 1 = time (t)
 # Column 2 = input (u)
 # Column 3 = output (yp)
-data = np.loadtxt('dataskylercontrol.txt',delimiter=',')
+data = np.loadtxt('dataskylercontrol.text',delimiter=',')
 # u0 = data[0,1]
 # yp0 = data[0,1]
 # t = data[:,0].T - data[0,0]
@@ -98,18 +97,19 @@ def objective(x):
 
 # initial guesses
 x0 = np.zeros(6)
-x0[0] = -2 # alpha1
-x0[1] = 20 # alpha2 --> taum
-x0[2] = -10 # alpha3
-x0[3] = 2  # alpha4
-x0[4] = 5 # beta
-x0[5] = 0.4 #gamma
+x0[0] = -4.99 # alpha1 = -5.0
+x0[1] = -10.0 # alpha2 = -10.0
+x0[2] = -30.0 # alpha3 = -30.0 
+x0[3] = -1.559  # lpha4 = -1.5
+x0[4] = 100000.0 # beta = 100000
+x0[5] = 0.7 # gamma = 0.1
 
 # show initial objective
 print('Initial SSE Objective: ' + str(objective(x0)))
-print('alpha01: ' + str(x0[0]),', alpha02: ' + str(x0[1]), ' and alpha03: ' + str(x0[2]), 'alpha04:' + str(x0[3]))
+print('alpha01: ' + str(x0[0]),', alpha02: ' + str(x0[1]), ' and alpha03: ' + str(x0[2]), 'alpha04: ' + str(x0[3]))
+# print('alpha04: ' + str(x0[3]))
 print(' beta0: ' + str(x0[4]))
-print(' gamma0' + str(x0[5]))
+print(' gamma0: ' + str(x0[5]))
 # optimize Km, taum, thetam
 solution = minimize(objective,x0)
 
@@ -119,8 +119,9 @@ x = solution.x
 print('Final SSE Objective: ' + str(objective(x)))
 
 print('alpha1: ' + str(x[0]),', alpha2: ' + str(x[1]),' and alpha3: ' + str(x[2]))
-print(' beta: ' + str(x[3]))
-print(' gamma' + str(x0[5]))
+print('alpha4: ' + str(x[3]))
+print(' beta: ' + str(x[4]))
+print(' gamma: ' + str(x0[5]))
 
 # print('taup: ' + str(x[1]))
 # print('thetap: ' + str(x[2]))
@@ -134,6 +135,7 @@ ym2 = sim_model(x)
 plt.plot(t,yp,'ko-',linewidth=2,label='Experiment Data')
 plt.plot(t,ym1,'b-',linewidth=2,label='Initial Guess')
 plt.plot(t,ym2,'r--',linewidth=3,label='Optimized Model')
+plt.title('Best Fit Model with Control - Gompertz')
 plt.xlabel('Days')
 plt.ylabel('Number of Cells')
 plt.legend(loc='best')
@@ -142,5 +144,8 @@ plt.legend(loc='best')
 #plt.plot(t,x[1],'r--',linewidth=3)
 # plt.legend(['Measured','Interpolated'],loc='best')
 # plt.ylabel('Input Data')
-plt.savefig('Exponential Model With 5ugml dOS.png')
+data = np.vstack((t,yp,ym2,)) # vertical stack
+data = data.T              # transpose data
+np.savetxt('outputdatamd6control.txt',data,delimiter=',')
+plt.savefig('Gompertz Model With control.png', dpi=300,bbox_inches='tight')
 plt.show()
