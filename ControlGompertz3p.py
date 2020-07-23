@@ -45,7 +45,7 @@ def fopdt7(y,t,x,alpha1,alpha2,alpha3,alpha4, beta, gamma):
     gamma = x[5]
     
   #  try:
-    if t <= 2:
+    if t <= 1.5:
                 alpha1 = x[0]
                 dydt = (alpha1 * y)*math.log1p(beta/(y + gamma)) - alpha4 * y
     else: 
@@ -96,13 +96,21 @@ def objective(x):
     return obj
 
 # initial guesses
-x0 = np.zeros(6)
-x0[0] = -4.99 # alpha1 = -5.0
-x0[1] = -10.0 # alpha2 = -10.0
-x0[2] = -30.0 # alpha3 = -30.0 
-x0[3] = -1.559  # lpha4 = -1.5
-x0[4] = 100000.0 # beta = 100000
-x0[5] = 0.7 # gamma = 0.1
+x0 = np.zeros(6)   # Nelder Mead                  Powell
+x0[0] = -50.0 # alpha1 = -5.0  -4.99   -750.0    -50.0  
+x0[1] = 18000 # alpha2 = -10.0 -10.0   12000     18000
+x0[2] = -3500 # alpha3 = -30.0  -30.0  -8000.0    -3500
+x0[3] = 0.5  # lpha4 = -1.5   -1.559  -0.5        0.5
+x0[4] = 110 # beta = 100000   100000  110.0       110 
+x0[5] = 0.1 # gamma = 0.1 or 0.7       0.7        0.5   
+ym1 = sim_model(x0)
+#plt.plot(t,ym1,'b-',linewidth=2,label='Initial Guess')
+#plt.plot(t,yp,'ko-',linewidth=2,label='Experiment Data')
+#plt.title('Best Fit Model with Control - Gompertz')
+#plt.xlabel('Days')
+#plt.ylabel('Number of Cells')
+#plt.legend(loc='best')
+#plt.show() 
 
 # show initial objective
 print('Initial SSE Objective: ' + str(objective(x0)))
@@ -111,7 +119,10 @@ print('alpha01: ' + str(x0[0]),', alpha02: ' + str(x0[1]), ' and alpha03: ' + st
 print(' beta0: ' + str(x0[4]))
 print(' gamma0: ' + str(x0[5]))
 # optimize Km, taum, thetam
-solution = minimize(objective,x0)
+#solution = minimize(objective,x0,method='nelder-mead',
+#               options={'xatol': 1e-8, 'maxfev': 100000, 'disp': True})
+solution = minimize(objective,x0,method='powell',
+               options={'xtol': 1e-8, 'maxfev': 100000, 'disp': True})
 
 x = solution.x
 
@@ -127,23 +138,23 @@ print(' gamma: ' + str(x0[5]))
 # print('thetap: ' + str(x[2]))
 
 # calculate model with updated parameters
-ym1 = sim_model(x0)
+# ym1 = sim_model(x0)
 ym2 = sim_model(x)
 # plot results
 # plt.figure(1)
 # plt.subplot(2,1,1)
-plt.plot(t,yp,'ko-',linewidth=2,label='Experiment Data')
+plt.plot(t,yp,'ko',linewidth=2,label='Experiment Data')
 plt.plot(t,ym1,'b-',linewidth=2,label='Initial Guess')
-plt.plot(t,ym2,'r--',linewidth=3,label='Optimized Model')
+plt.plot(t,ym2,'r-',linewidth=3,label='Optimized Model')
 plt.title('Best Fit Model with Control - Gompertz')
 plt.xlabel('Days')
 plt.ylabel('Number of Cells')
 plt.legend(loc='best')
 #plt.subplot(2,1,2)
-#plt.plot(t,x[0],'bx-',linewidth=2)
-#plt.plot(t,x[1],'r--',linewidth=3)
-# plt.legend(['Measured','Interpolated'],loc='best')
-# plt.ylabel('Input Data')
+#plt.plot(t,x0[1,],'bx-',linewidth=2, )
+#plt.plot(t,x[1,],'r--',linewidth=3)
+#plt.legend(['Measured','Interpolated'],loc='best')
+#plt.ylabel('Input Data')
 data = np.vstack((t,yp,ym2,)) # vertical stack
 data = data.T              # transpose data
 np.savetxt('outputdatamd6control.txt',data,delimiter=',')
