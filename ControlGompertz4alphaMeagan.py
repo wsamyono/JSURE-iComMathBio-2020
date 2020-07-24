@@ -96,13 +96,13 @@ def objective(x):
     return obj
 
 # initial guesses
-x0 = np.zeros(6)   # Nelder Mead                  Powell
-x0[0] = -50.0 # alpha1 = -5.0  -4.99   -750.0    -50.0  
-x0[1] = 18000 # alpha2 = -10.0 -10.0   12000     18000
-x0[2] = -4500 # alpha3 = -30.0  -30.0  -8000.0    -3500
-x0[3] = 0.5  # lpha4 = -1.5   -1.559  -0.5        0.5
-x0[4] = 110 # beta = 100000   100000  110.0       110 
-x0[5] = 0.7 # gamma = 0.1 or 0.7       0.7        0.5   
+x0 = np.zeros(6)   #       Powell
+x0[0] = 4000.0 # alpha1 = 5000  
+x0[1] = 6500 # alpha2 = -6800
+x0[2] = 12000 # alpha3 = 1500
+x0[3] = 0.5  # lpha4 = 0.5
+x0[4] = 110 # beta = 110       110 
+x0[5] = 0.7 # gamma = 0.7   
 ym1 = sim_model(x0)
 plt.plot(t,ym1,'b-',linewidth=2,label='Initial Guess')
 plt.plot(t,yp,'ko-',linewidth=2,label='Experiment Data')
